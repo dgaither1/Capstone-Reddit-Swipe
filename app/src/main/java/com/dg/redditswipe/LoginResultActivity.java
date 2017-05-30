@@ -14,6 +14,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -128,11 +131,18 @@ public class LoginResultActivity extends AppCompatActivity {
                         closeWithError("You must be subscribed to at least 1 subreddit");
                     }
 
+                    HashMap<String, Boolean> subredditNames = new HashMap<>();
+
                     for(int i = 0; i < children.length(); i++) {
                         JSONObject subreddit = children.getJSONObject(i).optJSONObject("data");
 
-                        Log.d("DG", "- Subreddit name = " + subreddit.optString("display_name"));
+                        subredditNames.put(subreddit.optString("display_name"), true);
                     }
+
+                    Intent launchSubredditPost = new Intent(LoginResultActivity.this, SubredditPostActivity.class);
+                    launchSubredditPost.putExtra("subredditNames", subredditNames);
+                    startActivity(launchSubredditPost);
+
 
                 } catch (JSONException e) {
                     closeWithError("There was an error pulling the subreddits that you are subscribed to");

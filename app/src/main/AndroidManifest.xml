@@ -28,6 +28,7 @@
                     android:path="/my_redirect" />
             </intent-filter>
         </activity>
+        <activity android:name=".SubredditPostActivity" />
     </application>
 
 </manifest>
