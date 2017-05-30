@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">RedditSwipe</string>
+    <string formatted="false" name="auth_url"><![CDATA[https://www.reddit.com/api/v1/authorize.compact?client_id=%s&response_type=code&state=%s&redirect_uri=%s&duration=permanent&scope=mysubreddits,subscribe,read,identity,history]]></string>
+
+    <string name="client_id">-RncNNYf7NA6EQ</string>
+
+    <string name="state">MY_RANDOM_STRING_1</string>
+    <string name="redirect_uri">http://www.example.com/my_redirect</string>
+    <string name="access_token_url">https://www.reddit.com/api/v1/access_token</string>
+    <string name="subreddit_url">https://oauth.reddit.com/subreddits/mine/subscriber/?limit=25</string>
+    <string name="user_settings_url">https://oauth.reddit.com/api/v1/me</string>
 </resources>
