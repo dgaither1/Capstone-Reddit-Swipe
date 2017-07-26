@@ -7,8 +7,10 @@
     <string name="state">MY_RANDOM_STRING_1</string>
     <string name="redirect_uri">http://www.example.com/my_redirect</string>
     <string name="access_token_url">https://www.reddit.com/api/v1/access_token</string>
-    <string name="subreddit_url">https://oauth.reddit.com/subreddits/mine/subscriber/?limit=25</string>
-    <string name="random">https://oauth.reddit.com/r/gaming/random</string>
+    <string name="subreddit_url">https://oauth.reddit.com/subreddits/mine/subscriber/?limit=50</string>
+    <string name="specific_subreddit_url">https://oauth.reddit.com/r/</string>
+    <string name="random">/random/?limit=1</string>
     <string name="user_settings_url">https://oauth.reddit.com/api/v1/me</string>
     <string name="select_subreddits">Select subreddits</string>
+    <string name="reddit_logon_error">We had a problem logging you in to Reddit. Please try again</string>
 </resources>

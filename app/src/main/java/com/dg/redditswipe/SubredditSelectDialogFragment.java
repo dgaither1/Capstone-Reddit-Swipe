@@ -8,6 +8,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,11 +29,10 @@ public class SubredditSelectDialogFragment extends AppCompatDialogFragment {
     private String[] names;
     private boolean[] checked;
 
-    public static SubredditSelectDialogFragment newInstance(HashMap<String, Boolean> subreddits) {
+    public static SubredditSelectDialogFragment newInstance() {
         SubredditSelectDialogFragment fragment = new SubredditSelectDialogFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable("args", subreddits);
         fragment.setArguments(args);
 
         return fragment;
@@ -36,7 +42,7 @@ public class SubredditSelectDialogFragment extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        HashMap<String, Boolean> subreddits = (HashMap<String, Boolean>) getArguments().getSerializable("args");
+        HashMap<String, Boolean> subreddits = SubredditDataHandler.getSubscribedSubreddits();
 
         if(subreddits != null && subreddits.size() > 0) {
             names = new String[subreddits.size()];
@@ -56,7 +62,6 @@ public class SubredditSelectDialogFragment extends AppCompatDialogFragment {
             builder.setTitle("Select your subreddits").setMultiChoiceItems(names, checked, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int index, boolean isChecked) {
-                    checked[index] = !checked[index];
                 }
             });
 
@@ -64,5 +69,19 @@ public class SubredditSelectDialogFragment extends AppCompatDialogFragment {
         } else {
             return super.onCreateDialog(savedInstanceState);
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+
+        HashMap<String, Boolean> updatedSubreddits = new HashMap<>();
+
+        for(int i = 0; i < names.length; i++) {
+            updatedSubreddits.put(names[i], checked[i]);
+        }
+
+        SubredditDataHandler.updateSubscribedSubreddits(updatedSubreddits);
+
+        super.onDismiss(dialog);
     }
 }
