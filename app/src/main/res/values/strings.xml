@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">RedditSwipe</string>
-    <string formatted="false" name="auth_url"><![CDATA[https://www.reddit.com/api/v1/authorize.compact?client_id=%s&response_type=code&state=%s&redirect_uri=%s&duration=permanent&scope=mysubreddits,subscribe,read,identity,history]]></string>
+    <string formatted="false" name="auth_url"><![CDATA[https://www.reddit.com/api/v1/authorize.compact?client_id=%s&response_type=code&state=%s&redirect_uri=%s&duration=permanent&scope=mysubreddits,subscribe,read,identity,history,vote]]></string>
 
     <string name="client_id">-RncNNYf7NA6EQ</string>
 
@@ -13,4 +13,5 @@
     <string name="user_settings_url">https://oauth.reddit.com/api/v1/me</string>
     <string name="select_subreddits">Select subreddits</string>
     <string name="reddit_logon_error">We had a problem logging you in to Reddit. Please try again</string>
+    <string name="vote_url">https://oauth.reddit.com/api/vote</string>
 </resources>

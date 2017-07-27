@@ -26,6 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 
 /**
  * Created by mlc9433 on 7/26/17.
@@ -153,68 +154,104 @@ public class RedditServiceHandler {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    String json = response.body().string();
+                    String responseBody = response.body().string();
 
-                    Log.d("DG", json);
+                    if(response.isSuccessful()) {
+                        JSONObject data = null;
+                        if (responseBody.startsWith("[")) {
+                            try {
+                                JSONArray jsonResponse = null;
+                                jsonResponse = new JSONArray(responseBody);
+                                data = jsonResponse.getJSONObject(0).optJSONObject("data");
+                            } catch (JSONException e) {
+                                delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                            }
+                        } else {
+                            try {
+                                JSONObject jsonResponse = null;
+                                jsonResponse = new JSONObject(responseBody);
+                                data = jsonResponse.getJSONObject("data");
+                            } catch (JSONException e) {
+                                delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                            }
+                        }
 
 
-                    JSONObject data = null;
-                    if(json.startsWith("[")) {
                         try {
-                            JSONArray jsonResponse = null;
-                            jsonResponse = new JSONArray(json);
-                            data = jsonResponse.getJSONObject(0).optJSONObject("data");
-                        } catch(JSONException e) {
+                            if (data != null) {
+                                JSONArray children = data.optJSONArray("children");
+
+                                JSONObject post = children.getJSONObject(0).optJSONObject("data");
+
+                                RedditPostDO postDO = new RedditPostDO();
+
+                                postDO.setKind(children.getJSONObject(0).optString("kind"));
+                                postDO.setId(post.optString("id"));
+                                postDO.setTitle(post.optString("title"));
+                                postDO.setSubreddit(post.optString("subreddit_name_prefixed"));
+                                postDO.setScore(post.optLong("score"));
+                                postDO.setPoster(post.optString("author"));
+                                postDO.setSelfPost(post.optBoolean("is_self"));
+                                postDO.setUrl(post.optString("url"));
+
+                                if (postDO.isSelfPost()) {
+                                    postDO.setBody(post.optString("selftext"));
+                                } else {
+                                    JSONObject preview = post.getJSONObject("preview");
+                                    JSONArray images = preview.optJSONArray("images");
+                                    JSONObject source = images.getJSONObject(0).optJSONObject("source");
+                                    postDO.setImageUrl(source.optString("url"));
+                                }
+
+                                Log.d("DG", postDO.toString());
+
+                                delegate.onGetPostSuccess(postDO);
+                            } else {
+                                delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                            }
+
+                        } catch (JSONException e) {
                             delegate.onGetPostFailure("There was an error parsing the response from Reddit");
                         }
                     } else {
-                        try {
-                            JSONObject jsonResponse = null;
-                            jsonResponse = new JSONObject(json);
-                            data = jsonResponse.getJSONObject("data");
-                        } catch(JSONException e) {
-                            delegate.onGetPostFailure("There was an error parsing the response from Reddit");
-                        }
+                        delegate.onGetPostFailure(responseBody);
                     }
-
-
-                    try {
-                        if(data != null) {
-                            JSONArray children = data.optJSONArray("children");
-
-                            JSONObject post = children.getJSONObject(0).optJSONObject("data");
-
-                            RedditPostDO postDO = new RedditPostDO();
-
-                            postDO.setTitle(post.optString("title"));
-                            postDO.setSubreddit(post.optString("subreddit_name_prefixed"));
-                            postDO.setScore(post.optLong("score"));
-                            postDO.setPoster(post.optString("author"));
-                            postDO.setSelfPost(post.optBoolean("is_self"));
-                            postDO.setUrl(post.optString("url"));
-
-                            if (postDO.isSelfPost()) {
-                                postDO.setBody(post.optString("selftext"));
-                            } else {
-                                JSONObject preview = post.getJSONObject("preview");
-                                JSONArray images = preview.optJSONArray("images");
-                                JSONObject source = images.getJSONObject(0).optJSONObject("source");
-                                postDO.setImageUrl(source.optString("url"));
-                            }
-
-                            delegate.onGetPostSuccess(postDO);
-                        } else {
-                            delegate.onGetPostFailure("There was an error parsing the response from Reddit");
-                        }
-
-                    } catch (JSONException e) {
-                        delegate.onGetPostFailure("There was an error parsing the response from Reddit");
-                    }
-
                 }
             });
         } else {
             delegate.onGetPostFailure("Your connection to Reddit was lost");
+        }
+    }
+
+    public static void voteOnPost(final String serviceId, String postFullname, String vote, final RedditServiceDelegate delegate, Context context) {
+        if(accessToken != null && !accessToken.isEmpty()) {
+
+            Request request = new Request.Builder()
+                    .addHeader("User-Agent", "RedditSwipe")
+                    .addHeader("Authorization", "bearer " + accessToken)
+                    .url(context.getString(R.string.vote_url))
+                    .post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),
+                            "dir=" + vote + "&id=" + postFullname + "&rank=99"))
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    delegate.onFailure(serviceId, e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if(response.isSuccessful()) {
+
+                        delegate.onSuccess(serviceId);
+                    } else {
+                        String responseBody = response.body().string();
+                        delegate.onFailure(serviceId, responseBody);
+                    }
+                }
+            });
         }
     }
 }
