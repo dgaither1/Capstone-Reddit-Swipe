@@ -21,6 +21,7 @@ public class RedditPostDO implements Parcelable {
     private String id;
     private long score;
     private boolean isSelfPost;
+    private boolean isNSFW;
     private List<RedditCommentDO> comments;
 
     public String getTitle() {
@@ -103,6 +104,14 @@ public class RedditPostDO implements Parcelable {
         isSelfPost = selfPost;
     }
 
+    public boolean isNSFW() {
+        return isNSFW;
+    }
+
+    public void setNSFW(boolean nsfw) {
+        isNSFW = nsfw;
+    }
+
     public List<RedditCommentDO> getComments() {
         return comments;
     }
@@ -124,6 +133,7 @@ public class RedditPostDO implements Parcelable {
                 ", id='" + id + '\'' +
                 ", score=" + score +
                 ", isSelfPost=" + isSelfPost +
+                ", isNSFW=" + isNSFW +
                 ", comments=" + comments +
                 '}';
     }
@@ -145,6 +155,7 @@ public class RedditPostDO implements Parcelable {
         parcel.writeString(id);
         parcel.writeLong(score);
         parcel.writeByte((byte) (isSelfPost ? 1: 0));
+        parcel.writeByte((byte) (isNSFW ? 1: 0));
         parcel.writeTypedList(comments);
     }
 
@@ -163,6 +174,7 @@ public class RedditPostDO implements Parcelable {
         id = in.readString();
         score = in.readLong();
         isSelfPost = in.readByte() == 1;
+        isNSFW = in.readByte() == 1;
         in.readTypedList(comments, RedditCommentDO.CREATOR);
     }
 

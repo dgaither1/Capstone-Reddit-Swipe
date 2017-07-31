@@ -14,4 +14,11 @@
     <string name="select_subreddits">Select subreddits</string>
     <string name="reddit_logon_error">We had a problem logging you in to Reddit. Please try again</string>
     <string name="vote_url">https://oauth.reddit.com/api/vote</string>
+    <string name="welcome_to_redditswipe">Welcome to RedditSwipe!</string>
+    <string name="view_random_posts_from_n_your_favorite_subreddits">View random posts from\n your favorite subreddits!</string>
+    <string name="swipe_right_to_upvote_the_post">Swipe right to upvote the post</string>
+    <string name="swipe_left_to_downvote_the_post">Swipe left to downvote the post</string>
+    <string name="sign_in_with_reddit">Sign In With Reddit</string>
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

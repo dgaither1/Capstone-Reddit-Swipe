@@ -1,14 +1,11 @@
 package com.dg.redditswipe.services;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Base64;
 import android.util.Log;
 
-import com.dg.redditswipe.LoginResultActivity;
 import com.dg.redditswipe.R;
 import com.dg.redditswipe.SubredditDataHandler;
-import com.dg.redditswipe.SubredditPostActivity;
 import com.dg.redditswipe.data.RedditPostDO;
 
 import org.json.JSONArray;
@@ -17,7 +14,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -26,7 +22,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.BufferedSink;
 
 /**
  * Created by mlc9433 on 7/26/17.
@@ -156,6 +151,8 @@ public class RedditServiceHandler {
                 public void onResponse(Call call, Response response) throws IOException {
                     String responseBody = response.body().string();
 
+                    Log.d("DG", "responseBody = " + responseBody);
+
                     if(response.isSuccessful()) {
                         JSONObject data = null;
                         if (responseBody.startsWith("[")) {
@@ -193,9 +190,14 @@ public class RedditServiceHandler {
                                 postDO.setPoster(post.optString("author"));
                                 postDO.setSelfPost(post.optBoolean("is_self"));
                                 postDO.setUrl(post.optString("url"));
+                                postDO.setNSFW(post.optBoolean("over_18"));
 
                                 if (postDO.isSelfPost()) {
-                                    postDO.setBody(post.optString("selftext"));
+                                    if(post.optString("selftext").isEmpty()) {
+                                        postDO.setBody(post.optString("body"));
+                                    } else {
+                                        postDO.setBody(post.optString("selftext"));
+                                    }
                                 } else {
                                     JSONObject preview = post.getJSONObject("preview");
                                     JSONArray images = preview.optJSONArray("images");
@@ -254,4 +256,5 @@ public class RedditServiceHandler {
             });
         }
     }
+
 }
