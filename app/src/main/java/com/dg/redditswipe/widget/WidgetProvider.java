@@ -3,20 +3,27 @@ package com.dg.redditswipe.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.dg.redditswipe.R;
 import com.dg.redditswipe.SubredditDataHandler;
+import com.dg.redditswipe.data.RedditCommentDO;
 import com.dg.redditswipe.data.RedditPostDO;
 import com.dg.redditswipe.services.RedditServiceDelegate;
 import com.dg.redditswipe.services.RedditServiceGetPostDelegate;
 import com.dg.redditswipe.services.RedditServiceHandler;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+
+import java.util.ArrayList;
 
 /**
  * Created by mlc9433 on 7/31/17.
@@ -38,6 +45,34 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
         this.remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
         loadNewPost(this.context);
+
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        if(intent.getAction().equalsIgnoreCase("upvote")) {
+
+            RedditPostDO post = intent.getParcelableExtra("post");
+
+            if(post != null) {
+                RedditServiceHandler.voteOnPost(context.getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "1", this, context);
+            }
+
+        } else if(intent.getAction().equalsIgnoreCase("downvote")) {
+            RedditPostDO post = intent.getParcelableExtra("post");
+
+            if(post != null) {
+                RedditServiceHandler.voteOnPost(context.getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "-1", this, context);
+            }
+        }
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), WidgetProvider.class.getName());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+
+        onUpdate(context, appWidgetManager, appWidgetIds);
 
     }
 
@@ -65,17 +100,22 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Picasso.with(WidgetProvider.this.context).load(post.getImageUrl()).into(remoteViews, R.id.image_view, WidgetProvider.this.widgetIds);
+                        Picasso.with(WidgetProvider.this.context).load(post.getImageUrl()).transform(transformation).into(remoteViews, R.id.image_view, WidgetProvider.this.widgetIds);
                     }
                 });
             }
 
-            Intent intent = new Intent(context, WidgetProvider.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, this.widgetIds);
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-//                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//            remoteViews.setOnClickPendingIntent(R.id.actionButton, pendingIntent);
+            Intent upvoteIntent = new Intent(context, WidgetProvider.class);
+            upvoteIntent.setAction("upvote");
+            upvoteIntent.putExtra("post", post);
+            PendingIntent upvotePendingIntent = PendingIntent.getBroadcast(context, 0, upvoteIntent, 0);
+            remoteViews.setOnClickPendingIntent(R.id.upvote, upvotePendingIntent);
+
+            Intent downvoteIntent = new Intent(context, WidgetProvider.class);
+            downvoteIntent.setAction("downvote");
+            downvoteIntent.putExtra("post", post);
+            PendingIntent downvotePendingIntent = PendingIntent.getBroadcast(context, 0, downvoteIntent, 0);
+            remoteViews.setOnClickPendingIntent(R.id.downvote, downvotePendingIntent);
 
             final int count = this.widgetIds.length;
 
@@ -85,7 +125,7 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
             }
 
         } else {
-            loadNewPost(this.context);
+//            loadNewPost(this.context);
         }
     }
 
@@ -93,7 +133,21 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
     public void onGetPostFailure(String errorMessage) {
         Log.d("DG", "Post failed to load with errorMessage = " + errorMessage);
 
-        loadNewPost(this.context);
+        remoteViews.setTextViewText(R.id.title, "Please login to the RedditSwipe app");
+        remoteViews.setTextViewText(R.id.body, "");
+        remoteViews.setImageViewBitmap(R.id.image_view, null);
+        remoteViews.setViewVisibility(R.id.vote_buttons, View.GONE);
+
+//        Intent intent = new Intent(context, WidgetProvider.class);
+//        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, this.widgetIds);
+
+        final int count = this.widgetIds.length;
+
+        for (int i = 0; i < count; i++) {
+            int widgetId = this.widgetIds[i];
+            appWidgetManager.updateAppWidget(widgetId, remoteViews);
+        }
     }
 
     @Override
@@ -105,4 +159,28 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
     public void onFailure(String serviceId, String errorMessage) {
 
     }
+
+    private Transformation transformation = new Transformation() {
+        @Override
+        public Bitmap transform(Bitmap source) {
+            int targetWidth = context.getResources().getDisplayMetrics().widthPixels;
+            if (source.getWidth() > targetWidth)
+            {
+                double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
+                int targetHeight = (int) (targetWidth * aspectRatio);
+                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                if (result != source)
+                {
+                    source.recycle();
+                }
+                return result;
+            }
+            return source;
+        }
+
+        @Override
+        public String key() {
+            return "transformation" + " desiredWidth";
+        }
+    };
 }

@@ -42,14 +42,14 @@ public class LoginResultActivity extends AppCompatActivity implements RedditServ
 
         if(getIntent()!=null && getIntent().getAction().equals(Intent.ACTION_VIEW)) {
             Uri uri = getIntent().getData();
-            if(uri.getQueryParameter("error") != null) {
-                String error = uri.getQueryParameter("error");
-                closeWithError("We had a problem logging you in to Reddit. Please try again.  Error = " + error);
+            if(uri.getQueryParameter(getString(R.string.error_param)) != null) {
+                String error = uri.getQueryParameter(getString(R.string.error_param));
+                closeWithError(getString(R.string.reddit_logon_error) + " Error = " + error);
             } else {
-                String state = uri.getQueryParameter("state");
+                String state = uri.getQueryParameter(getString(R.string.state_param));
                 if(state.equals(getString(R.string.state))) {
-                    String code = uri.getQueryParameter("code");
-                    RedditServiceHandler.getAccessToken("getAccessToken", code, this, this);
+                    String code = uri.getQueryParameter(getString(R.string.code_param));
+                    RedditServiceHandler.getAccessToken(getString(R.string.get_access_token), code, this, this);
                 }
             }
         }
@@ -62,9 +62,9 @@ public class LoginResultActivity extends AppCompatActivity implements RedditServ
 
     @Override
     public void onSuccess(String serviceId) {
-        if(serviceId.equalsIgnoreCase("getAccessToken")) {
-            RedditServiceHandler.getSubreddits("getSubreddits", this, this);
-        } else if (serviceId.equalsIgnoreCase("getSubreddits")) {
+        if(serviceId.equalsIgnoreCase(getString(R.string.get_access_token))) {
+            RedditServiceHandler.getSubreddits(getString(R.string.get_subreddits), this, this);
+        } else if (serviceId.equalsIgnoreCase(getString(R.string.get_subreddits))) {
 
             runOnUiThread(new Runnable() {
 

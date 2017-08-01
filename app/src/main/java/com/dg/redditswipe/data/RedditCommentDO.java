@@ -3,6 +3,7 @@ package com.dg.redditswipe.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,6 +92,8 @@ public class RedditCommentDO implements Parcelable {
         poster = in.readString();
         subreddit = in.readString();
         score = in.readLong();
+
+        childComments = new ArrayList<>();
         in.readTypedList(childComments, RedditCommentDO.CREATOR);
     }
 

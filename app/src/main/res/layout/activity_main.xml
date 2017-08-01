@@ -46,30 +46,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="@string/swipe_right_to_upvote_the_post"
+                android:text="@string/swipe_up_to_upvote_the_post"
                 android:textSize="18sp"
-                android:gravity="end|center_vertical"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="@string/swipe_left_to_downvote_the_post"
+                android:text="@string/swipe_down_to_downvote_the_post"
                 android:textSize="18sp"
-                android:gravity="start|center_vertical"/>
+                android:gravity="center"/>
 
             <Button android:id="@+id/signin"
                 android:text="@string/sign_in_with_reddit"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight=".5"
+                android:layout_height="80dp"
                 android:onClick="startSignIn"
                 style="@style/Widget.AppCompat.Button.Colored"/>
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight=".5" />
         </LinearLayout>
 
     </android.support.v7.widget.CardView>

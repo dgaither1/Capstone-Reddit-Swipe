@@ -16,9 +16,54 @@
     <string name="vote_url">https://oauth.reddit.com/api/vote</string>
     <string name="welcome_to_redditswipe">Welcome to RedditSwipe!</string>
     <string name="view_random_posts_from_n_your_favorite_subreddits">View random posts from\n your favorite subreddits!</string>
-    <string name="swipe_right_to_upvote_the_post">Swipe right to upvote the post</string>
-    <string name="swipe_left_to_downvote_the_post">Swipe left to downvote the post</string>
+    <string name="swipe_up_to_upvote_the_post">Swipe up to upvote the post</string>
+    <string name="swipe_down_to_downvote_the_post">Swipe down to downvote the post</string>
     <string name="sign_in_with_reddit">Sign In With Reddit</string>
     <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
     <string name="admob_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="user_agent_key">User-Agent</string>
+    <string name="authorization_key">Authorization</string>
+    <string name="basic">"Basic "</string>
+    <string name="access_token">access_token</string>
+    <string name="refresh_token">refresh_token</string>
+    <string name="bearer">"bearer "</string>
+    <string name="data">data</string>
+    <string name="children">children</string>
+    <string name="error_parsing_response">There was an error parsing the response from Reddit</string>
+    <string name="connection_lost">Your connection to Reddit was lost</string>
+    <string name="cant_pull_subreddits">There was an error pulling the subreddits that you are subscribed to</string>
+    <string name="must_be_subscribed">You must be subscribed to at least 1 subreddit</string>
+    <string name="display_name">display_name</string>
+    <string name="kind">kind</string>
+    <string name="id">id</string>
+    <string name="title">title</string>
+    <string name="subreddit_name_prefixed">subreddit_name_prefixed</string>
+    <string name="score">score</string>
+    <string name="author">author</string>
+    <string name="is_self">is_self</string>
+    <string name="url">url</string>
+    <string name="over_18">over_18</string>
+    <string name="selftext">selftext</string>
+    <string name="body">body</string>
+    <string name="preview">preview</string>
+    <string name="images">images</string>
+    <string name="source">source</string>
+    <string name="rank"><![CDATA[&rank=99]]></string>
+    <string name="media_type_form_urlencoded">application/x-www-form-urlencoded</string>
+    <string name="grant_type_and_code"><![CDATA[grant_type=authorization_code&code=]]></string>
+    <string name="redirect_uri_param_name"><![CDATA[&redirect_uri=]]></string>
+    <string name="dir">dir=</string>
+    <string name="id_param_name"><![CDATA[&id=]]></string>
+    <string name="post">post</string>
+    <string name="get_random_post">getRandomPostForSubReddit</string>
+    <string name="fragment_tag">tagSelection</string>
+    <string name="upvoted">Upvoted</string>
+    <string name="downvoted">Downvoted</string>
+    <string name="vote_on_post">voteOnPost</string>
+    <string name="get_access_token">getAccessToken</string>
+    <string name="get_subreddits">getSubreddits</string>
+    <string name="code_param">code</string>
+    <string name="state_param">state</string>
+    <string name="error_param">error</string>
+    <string name="select_your_subreddits">Select your subreddits</string>
 </resources>

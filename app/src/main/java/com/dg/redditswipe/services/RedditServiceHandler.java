@@ -41,12 +41,12 @@ public class RedditServiceHandler {
                 Base64.NO_WRAP);
 
         Request request = new Request.Builder()
-                .addHeader("User-Agent", "RedditSwipe")
-                .addHeader("Authorization", "Basic " + encodedAuthString)
+                .addHeader(context.getString(R.string.user_agent_key), context.getString(R.string.app_name))
+                .addHeader(context.getString(R.string.authorization_key), context.getString(R.string.basic) + encodedAuthString)
                 .url(context.getString(R.string.access_token_url))
-                .post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),
-                        "grant_type=authorization_code&code=" + code +
-                                "&redirect_uri=" + context.getString(R.string.redirect_uri)))
+                .post(RequestBody.create(MediaType.parse(context.getString(R.string.media_type_form_urlencoded)),
+                        context.getString(R.string.grant_type_and_code) + code +
+                                context.getString(R.string.redirect_uri_param_name) + context.getString(R.string.redirect_uri)))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -62,8 +62,8 @@ public class RedditServiceHandler {
                 JSONObject data = null;
                 try {
                     data = new JSONObject(json);
-                    accessToken = data.optString("access_token");
-                    refreshToken = data.optString("refresh_token");
+                    accessToken = data.optString(context.getString(R.string.access_token));
+                    refreshToken = data.optString(context.getString(R.string.refresh_token));
 
                     delegate.onSuccess(serviceId);
 
@@ -80,8 +80,8 @@ public class RedditServiceHandler {
         if(accessToken != null && !accessToken.isEmpty()) {
 
             Request request = new Request.Builder()
-                    .addHeader("User-Agent", "RedditSwipe")
-                    .addHeader("Authorization", "bearer " + accessToken)
+                    .addHeader(context.getString(R.string.user_agent_key), context.getString(R.string.app_name))
+                    .addHeader(context.getString(R.string.authorization_key), context.getString(R.string.bearer) + accessToken)
                     .url(context.getString(R.string.subreddit_url))
                     .get()
                     .build();
@@ -102,40 +102,40 @@ public class RedditServiceHandler {
                     JSONObject jsonResponse = null;
                     try {
                         jsonResponse = new JSONObject(json);
-                        JSONObject data = jsonResponse.optJSONObject("data");
-                        JSONArray children = data.optJSONArray("children");
+                        JSONObject data = jsonResponse.optJSONObject(context.getString(R.string.data));
+                        JSONArray children = data.optJSONArray(context.getString(R.string.children));
 
                         if (children.length() == 0) {
-                            delegate.onFailure(serviceId, "You must be subscribed to at least 1 subreddit");
+                            delegate.onFailure(serviceId, context.getString(R.string.must_be_subscribed));
                         }
 
                         HashMap<String, Boolean> subredditNames = new HashMap<>();
 
                         for (int i = 0; i < children.length(); i++) {
-                            JSONObject subreddit = children.getJSONObject(i).optJSONObject("data");
+                            JSONObject subreddit = children.getJSONObject(i).optJSONObject(context.getString(R.string.data));
 
-                            subredditNames.put(subreddit.optString("display_name"), SubredditDataHandler.isSubredditSelected(subreddit.optString("display_name")));
+                            subredditNames.put(subreddit.optString(context.getString(R.string.display_name)), SubredditDataHandler.isSubredditSelected(subreddit.optString(context.getString(R.string.display_name))));
                         }
 
                         delegate.onSuccess(serviceId);
 
                     } catch (JSONException e) {
-                        delegate.onFailure(serviceId, "There was an error pulling the subreddits that you are subscribed to");
+                        delegate.onFailure(serviceId, context.getString(R.string.cant_pull_subreddits));
                     }
 
                 }
             });
         } else {
-            delegate.onFailure(serviceId, "Your connection to Reddit was lost");
+            delegate.onFailure(serviceId, context.getString(R.string.connection_lost));
         }
     }
 
-    public static void getRandomPostForSubreddit(final String serviceId, String subredditName, final RedditServiceGetPostDelegate delegate, Context context) {
+    public static void getRandomPostForSubreddit(final String serviceId, String subredditName, final RedditServiceGetPostDelegate delegate, final Context context) {
         if(accessToken != null && !accessToken.isEmpty()) {
 
             Request request = new Request.Builder()
-                    .addHeader("User-Agent", "RedditSwipe")
-                    .addHeader("Authorization", "bearer " + accessToken)
+                    .addHeader(context.getString(R.string.user_agent_key), context.getString(R.string.app_name))
+                    .addHeader(context.getString(R.string.authorization_key), context.getString(R.string.bearer) + accessToken)
                     .url(context.getString(R.string.specific_subreddit_url) + subredditName + context.getString(R.string.random))
                     .get()
                     .build();
@@ -159,61 +159,61 @@ public class RedditServiceHandler {
                             try {
                                 JSONArray jsonResponse = null;
                                 jsonResponse = new JSONArray(responseBody);
-                                data = jsonResponse.getJSONObject(0).optJSONObject("data");
+                                data = jsonResponse.getJSONObject(0).optJSONObject(context.getString(R.string.data));
                             } catch (JSONException e) {
-                                delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                                delegate.onGetPostFailure(context.getString(R.string.error_parsing_response));
                             }
                         } else {
                             try {
                                 JSONObject jsonResponse = null;
                                 jsonResponse = new JSONObject(responseBody);
-                                data = jsonResponse.getJSONObject("data");
+                                data = jsonResponse.getJSONObject(context.getString(R.string.data));
                             } catch (JSONException e) {
-                                delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                                delegate.onGetPostFailure(context.getString(R.string.error_parsing_response));
                             }
                         }
 
 
                         try {
                             if (data != null) {
-                                JSONArray children = data.optJSONArray("children");
+                                JSONArray children = data.optJSONArray(context.getString(R.string.children));
 
-                                JSONObject post = children.getJSONObject(0).optJSONObject("data");
+                                JSONObject post = children.getJSONObject(0).optJSONObject(context.getString(R.string.data));
 
                                 RedditPostDO postDO = new RedditPostDO();
 
-                                postDO.setKind(children.getJSONObject(0).optString("kind"));
-                                postDO.setId(post.optString("id"));
-                                postDO.setTitle(post.optString("title"));
-                                postDO.setSubreddit(post.optString("subreddit_name_prefixed"));
-                                postDO.setScore(post.optLong("score"));
-                                postDO.setPoster(post.optString("author"));
-                                postDO.setSelfPost(post.optBoolean("is_self"));
-                                postDO.setUrl(post.optString("url"));
-                                postDO.setNSFW(post.optBoolean("over_18"));
+                                postDO.setKind(children.getJSONObject(0).optString(context.getString(R.string.kind)));
+                                postDO.setId(post.optString(context.getString(R.string.id)));
+                                postDO.setTitle(post.optString(context.getString(R.string.title)));
+                                postDO.setSubreddit(post.optString(context.getString(R.string.subreddit_name_prefixed)));
+                                postDO.setScore(post.optLong(context.getString(R.string.score)));
+                                postDO.setPoster(post.optString(context.getString(R.string.author)));
+                                postDO.setSelfPost(post.optBoolean(context.getString(R.string.is_self)));
+                                postDO.setUrl(post.optString(context.getString(R.string.url)));
+                                postDO.setNSFW(post.optBoolean(context.getString(R.string.over_18)));
 
                                 if (postDO.isSelfPost()) {
-                                    if(post.optString("selftext").isEmpty()) {
-                                        postDO.setBody(post.optString("body"));
+                                    if(post.optString(context.getString(R.string.selftext)).isEmpty()) {
+                                        postDO.setBody(post.optString(context.getString(R.string.body)));
                                     } else {
-                                        postDO.setBody(post.optString("selftext"));
+                                        postDO.setBody(post.optString(context.getString(R.string.selftext)));
                                     }
                                 } else {
-                                    JSONObject preview = post.getJSONObject("preview");
-                                    JSONArray images = preview.optJSONArray("images");
-                                    JSONObject source = images.getJSONObject(0).optJSONObject("source");
-                                    postDO.setImageUrl(source.optString("url"));
+                                    JSONObject preview = post.getJSONObject(context.getString(R.string.preview));
+                                    JSONArray images = preview.optJSONArray(context.getString(R.string.images));
+                                    JSONObject source = images.getJSONObject(0).optJSONObject(context.getString(R.string.source));
+                                    postDO.setImageUrl(source.optString(context.getString(R.string.url)));
                                 }
 
                                 Log.d("DG", postDO.toString());
 
                                 delegate.onGetPostSuccess(postDO);
                             } else {
-                                delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                                delegate.onGetPostFailure(context.getString(R.string.error_parsing_response));
                             }
 
                         } catch (JSONException e) {
-                            delegate.onGetPostFailure("There was an error parsing the response from Reddit");
+                            delegate.onGetPostFailure(context.getString(R.string.error_parsing_response));
                         }
                     } else {
                         delegate.onGetPostFailure(responseBody);
@@ -221,7 +221,7 @@ public class RedditServiceHandler {
                 }
             });
         } else {
-            delegate.onGetPostFailure("Your connection to Reddit was lost");
+            delegate.onGetPostFailure(context.getString(R.string.connection_lost));
         }
     }
 
@@ -229,11 +229,11 @@ public class RedditServiceHandler {
         if(accessToken != null && !accessToken.isEmpty()) {
 
             Request request = new Request.Builder()
-                    .addHeader("User-Agent", "RedditSwipe")
-                    .addHeader("Authorization", "bearer " + accessToken)
+                    .addHeader(context.getString(R.string.user_agent_key), context.getString(R.string.app_name))
+                    .addHeader(context.getString(R.string.authorization_key), context.getString(R.string.bearer) + accessToken)
                     .url(context.getString(R.string.vote_url))
-                    .post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),
-                            "dir=" + vote + "&id=" + postFullname + "&rank=99"))
+                    .post(RequestBody.create(MediaType.parse(context.getString(R.string.media_type_form_urlencoded)),
+                            context.getString(R.string.dir) + vote + context.getString(R.string.id_param_name) + postFullname + context.getString(R.string.rank)))
                     .build();
 
             client.newCall(request).enqueue(new Callback() {

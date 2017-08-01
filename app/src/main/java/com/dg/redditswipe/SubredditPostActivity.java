@@ -60,8 +60,8 @@ public class SubredditPostActivity extends AppCompatActivity implements RedditSe
         downvote = (ImageView) findViewById(R.id.downvote);
         voteSection = (CardView) findViewById(R.id.vote_section);
 
-        if(savedInstanceState != null && savedInstanceState.getParcelable("post") != null) {
-            this.onGetPostSuccess((RedditPostDO) savedInstanceState.getParcelable("post"));
+        if(savedInstanceState != null && savedInstanceState.getParcelable(getString(R.string.post)) != null) {
+            this.onGetPostSuccess((RedditPostDO) savedInstanceState.getParcelable(getString(R.string.post)));
         } else {
             loadNewPost();
         }
@@ -77,7 +77,7 @@ public class SubredditPostActivity extends AppCompatActivity implements RedditSe
             imagePreview.setVisibility(View.GONE);
             voteSection.setVisibility(View.GONE);
             setTitle("");
-            RedditServiceHandler.getRandomPostForSubreddit("getRandomPostForSubReddit", subreddit, this, this);
+            RedditServiceHandler.getRandomPostForSubreddit(getString(R.string.get_random_post), subreddit, this, this);
         }
     }
 
@@ -96,7 +96,7 @@ public class SubredditPostActivity extends AppCompatActivity implements RedditSe
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 SubredditSelectDialogFragment dialog = SubredditSelectDialogFragment.newInstance();
 
-                dialog.show(fragmentManager, "tagSelection");
+                dialog.show(fragmentManager, getString(R.string.fragment_tag));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,18 +151,18 @@ public class SubredditPostActivity extends AppCompatActivity implements RedditSe
                     upvote.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            RedditServiceHandler.voteOnPost("voteOnPost", post.getKind() + "_" + post.getId(), "1", SubredditPostActivity.this, SubredditPostActivity.this);
+                            RedditServiceHandler.voteOnPost(getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "1", SubredditPostActivity.this, SubredditPostActivity.this);
                             loadNewPost();
-                            Toast.makeText(SubredditPostActivity.this, "Upvoted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SubredditPostActivity.this, R.string.upvoted, Toast.LENGTH_SHORT).show();
                         }
                     });
 
                     downvote.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            RedditServiceHandler.voteOnPost("voteOnPost", post.getKind() + "_" + post.getId(), "-1", SubredditPostActivity.this, SubredditPostActivity.this);
+                            RedditServiceHandler.voteOnPost(getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "-1", SubredditPostActivity.this, SubredditPostActivity.this);
                             loadNewPost();
-                            Toast.makeText(SubredditPostActivity.this, "Downvoted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SubredditPostActivity.this, R.string.downvoted, Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -171,14 +171,14 @@ public class SubredditPostActivity extends AppCompatActivity implements RedditSe
 
                         @Override
                         public boolean onSwipe(Direction direction) {
-                            if(direction == Direction.right) {
-                                RedditServiceHandler.voteOnPost("voteOnPost", post.getKind() + "_" + post.getId(), "1", SubredditPostActivity.this, SubredditPostActivity.this);
+                            if(direction == Direction.up) {
+                                RedditServiceHandler.voteOnPost(getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "1", SubredditPostActivity.this, SubredditPostActivity.this);
                                 loadNewPost();
-                                Toast.makeText(SubredditPostActivity.this, "Upvoted", Toast.LENGTH_SHORT).show();
-                            } else if (direction == Direction.left) {
-                                RedditServiceHandler.voteOnPost("voteOnPost", post.getKind() + "_" + post.getId(), "-1", SubredditPostActivity.this, SubredditPostActivity.this);
+                                Toast.makeText(SubredditPostActivity.this, R.string.upvoted, Toast.LENGTH_SHORT).show();
+                            } else if (direction == Direction.down) {
+                                RedditServiceHandler.voteOnPost(getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "-1", SubredditPostActivity.this, SubredditPostActivity.this);
                                 loadNewPost();
-                                Toast.makeText(SubredditPostActivity.this, "Downvoted", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SubredditPostActivity.this, R.string.downvoted, Toast.LENGTH_SHORT).show();
                             }
 
                             return super.onSwipe(direction);
@@ -222,7 +222,7 @@ public class SubredditPostActivity extends AppCompatActivity implements RedditSe
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("post", this.post);
+        outState.putParcelable(getString(R.string.post), this.post);
 
         super.onSaveInstanceState(outState);
     }

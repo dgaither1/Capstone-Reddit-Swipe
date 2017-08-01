@@ -3,6 +3,7 @@ package com.dg.redditswipe.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -175,6 +176,8 @@ public class RedditPostDO implements Parcelable {
         score = in.readLong();
         isSelfPost = in.readByte() == 1;
         isNSFW = in.readByte() == 1;
+
+        comments = new ArrayList<>();
         in.readTypedList(comments, RedditCommentDO.CREATOR);
     }
 

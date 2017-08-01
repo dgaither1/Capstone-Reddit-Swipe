@@ -59,7 +59,7 @@ public class SubredditSelectDialogFragment extends AppCompatDialogFragment {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-            builder.setTitle("Select your subreddits").setMultiChoiceItems(names, checked, new DialogInterface.OnMultiChoiceClickListener() {
+            builder.setTitle(R.string.select_your_subreddits).setMultiChoiceItems(names, checked, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int index, boolean isChecked) {
                 }
