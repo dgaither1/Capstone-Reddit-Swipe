@@ -48,7 +48,7 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if(intent.getAction().equalsIgnoreCase("upvote")) {
+        if(intent.getAction().equalsIgnoreCase("upvote_image")) {
 
             RedditPostDO post = intent.getParcelableExtra("post");
 
@@ -56,7 +56,7 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
                 RedditServiceHandler.voteOnPost(context.getString(R.string.vote_on_post), post.getKind() + "_" + post.getId(), "1", this, context);
             }
 
-        } else if(intent.getAction().equalsIgnoreCase("downvote")) {
+        } else if(intent.getAction().equalsIgnoreCase("downvote_image")) {
             RedditPostDO post = intent.getParcelableExtra("post");
 
             if(post != null) {
@@ -107,19 +107,19 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
             }
 
             Intent upvoteIntent = new Intent(context, WidgetProvider.class);
-            upvoteIntent.setAction("upvote");
+            upvoteIntent.setAction("upvote_image");
             upvoteIntent.putExtra("post", post);
             PendingIntent upvotePendingIntent = PendingIntent.getBroadcast(context, widgetIds[0], upvoteIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.upvote, upvotePendingIntent);
 
             Intent downvoteIntent = new Intent(context, WidgetProvider.class);
-            downvoteIntent.setAction("downvote");
+            downvoteIntent.setAction("downvote_image");
             downvoteIntent.putExtra("post", post);
             PendingIntent downvotePendingIntent = PendingIntent.getBroadcast(context, widgetIds[0], downvoteIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.downvote, downvotePendingIntent);
 
             Intent refreshIntent = new Intent(context, WidgetProvider.class);
-            refreshIntent.setAction("refresh");
+            refreshIntent.setAction("refresh_image");
             refreshIntent.putExtra("post", post);
             PendingIntent refreshPendingIntent = PendingIntent.getBroadcast(context, widgetIds[0], refreshIntent, 0);
             remoteViews.setOnClickPendingIntent(R.id.refresh, refreshPendingIntent);
@@ -145,7 +145,7 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
         remoteViews.setImageViewBitmap(R.id.image_view, null);
 
         Intent refreshIntent = new Intent(context, WidgetProvider.class);
-        refreshIntent.setAction("refresh");
+        refreshIntent.setAction("refresh_image");
         PendingIntent refreshPendingIntent = PendingIntent.getBroadcast(context, 0, refreshIntent, 0);
         remoteViews.setOnClickPendingIntent(R.id.refresh, refreshPendingIntent);
 

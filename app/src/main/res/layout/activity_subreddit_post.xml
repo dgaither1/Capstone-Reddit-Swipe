@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_weight=".5"
                 android:layout_height="match_parent"
-                android:src="@drawable/upvote"
+                android:src="@drawable/upvote_image"
                 android:contentDescription="@string/upvote_this_post"/>
 
             <ImageView
@@ -86,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_weight=".5"
                 android:layout_height="match_parent"
-                android:src="@drawable/downvote"
+                android:src="@drawable/downvote_image"
                 android:contentDescription="@string/downvote_this_post"/>
 
         </LinearLayout>
