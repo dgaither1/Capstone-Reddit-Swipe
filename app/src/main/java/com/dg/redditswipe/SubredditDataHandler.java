@@ -1,5 +1,9 @@
 package com.dg.redditswipe;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -20,13 +24,17 @@ import java.util.Random;
 
 public class SubredditDataHandler {
 
+    private static String deviceId;
+
     private static HashMap<String, Boolean> subscribedSubreddits;
 
-    public static void init() {
+    public static void init(Context context) {
+
+        deviceId = retrieveDeviceId(context);
 
         // Access subreddits on database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("subreddits");
+        DatabaseReference myRef = database.getReference("subreddits" + deviceId);
 
         //Read from the database
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,7 +83,7 @@ public class SubredditDataHandler {
 
         // Update the stored database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("subreddits");
+        DatabaseReference myRef = database.getReference("subreddits" + deviceId);
 
         myRef.setValue(subscribedSubreddits);
     }
@@ -89,23 +97,51 @@ public class SubredditDataHandler {
 
         // Update the stored database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("subreddits");
+        DatabaseReference myRef = database.getReference("subreddits" + deviceId);
 
         myRef.setValue(subscribedSubreddits);
     }
 
     public static String getRandomSelectedSubreddit() {
-        HashMap<String, Boolean> modifiedCollection = new HashMap<>(subscribedSubreddits);
-        modifiedCollection.values().removeAll(Collections.singleton(false));
+        if(subscribedSubreddits != null) {
+            HashMap<String, Boolean> modifiedCollection = new HashMap<>(subscribedSubreddits);
+            modifiedCollection.values().removeAll(Collections.singleton(false));
 
-        if(!modifiedCollection.isEmpty()) {
-            List<String> keysAsList = new ArrayList<>(modifiedCollection.keySet());
+            if (!modifiedCollection.isEmpty()) {
+                List<String> keysAsList = new ArrayList<>(modifiedCollection.keySet());
 
-            Random generator = new Random();
+                Random generator = new Random();
 
-            return keysAsList.get(generator.nextInt(keysAsList.size()));
+                return keysAsList.get(generator.nextInt(keysAsList.size()));
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
+    }
+
+    public static String retrieveDeviceId(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String deviceId = preferences.getString("deviceId", "");
+        if(deviceId.equalsIgnoreCase(""))
+        {
+            deviceId = generateAndStoreDeviceId(context);
+        }
+
+        return deviceId;
+    }
+
+    public static String generateAndStoreDeviceId(Context context) {
+
+        Random r = new Random();
+        String deviceId =  String.valueOf(r.nextInt(999999));
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("deviceId", deviceId);
+        editor.apply();
+
+        return null;
     }
 }

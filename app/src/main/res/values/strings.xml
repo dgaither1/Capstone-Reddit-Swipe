@@ -66,4 +66,11 @@
     <string name="state_param">state</string>
     <string name="error_param">error</string>
     <string name="select_your_subreddits">Select your subreddits</string>
+    <string name="subreddits_not_found">Subreddits not found</string>
+    <string name="post_unavailable">Post unavailable. Please refresh</string>
+    <string name="please_login">Please be sure to login to the RedditSwipe app, then hit refresh</string>
+    <string name="post_image">Post Image</string>
+    <string name="upvote_this_post">Upvote this post</string>
+    <string name="downvote_this_post">Downvote this post</string>
+    <string name="reload_a_new_post">Reload a new post</string>
 </resources>

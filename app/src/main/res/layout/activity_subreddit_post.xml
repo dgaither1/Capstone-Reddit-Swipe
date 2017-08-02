@@ -50,7 +50,8 @@
                 android:id="@+id/image_preview"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="centerInside"/>
+                android:scaleType="centerInside"
+                android:contentDescription="@string/post_image"/>
 
         </LinearLayout>
 
@@ -77,14 +78,16 @@
                 android:layout_width="0dp"
                 android:layout_weight=".5"
                 android:layout_height="match_parent"
-                android:src="@drawable/upvote"/>
+                android:src="@drawable/upvote"
+                android:contentDescription="@string/upvote_this_post"/>
 
             <ImageView
                 android:id="@+id/downvote"
                 android:layout_width="0dp"
                 android:layout_weight=".5"
                 android:layout_height="match_parent"
-                android:src="@drawable/downvote"/>
+                android:src="@drawable/downvote"
+                android:contentDescription="@string/downvote_this_post"/>
 
         </LinearLayout>
 
