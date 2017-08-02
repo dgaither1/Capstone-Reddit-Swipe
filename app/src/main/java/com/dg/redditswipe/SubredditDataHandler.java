@@ -24,6 +24,7 @@ import java.util.Random;
 
 public class SubredditDataHandler {
 
+    private static String dbPrefix = "subreddits";
     private static String deviceId;
 
     private static HashMap<String, Boolean> subscribedSubreddits;
@@ -34,7 +35,7 @@ public class SubredditDataHandler {
 
         // Access subreddits on database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("subreddits" + deviceId);
+        DatabaseReference myRef = database.getReference(dbPrefix + deviceId);
 
         //Read from the database
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -83,7 +84,7 @@ public class SubredditDataHandler {
 
         // Update the stored database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("subreddits" + deviceId);
+        DatabaseReference myRef = database.getReference(dbPrefix + deviceId);
 
         myRef.setValue(subscribedSubreddits);
     }
@@ -97,7 +98,7 @@ public class SubredditDataHandler {
 
         // Update the stored database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("subreddits" + deviceId);
+        DatabaseReference myRef = database.getReference(dbPrefix + deviceId);
 
         myRef.setValue(subscribedSubreddits);
     }
