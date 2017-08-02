@@ -171,13 +171,11 @@ public class WidgetProvider extends AppWidgetProvider implements RedditServiceGe
         @Override
         public Bitmap transform(Bitmap source) {
             int targetWidth = context.getResources().getDisplayMetrics().widthPixels;
-            if (source.getWidth() > targetWidth)
-            {
+            if (source.getWidth() > targetWidth) {
                 double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
                 int targetHeight = (int) (targetWidth * aspectRatio);
                 Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
-                if (result != source)
-                {
+                if (result != source) {
                     source.recycle();
                 }
                 return result;

@@ -73,4 +73,6 @@
     <string name="upvote_this_post">Upvote this post</string>
     <string name="downvote_this_post">Downvote this post</string>
     <string name="reload_a_new_post">Reload a new post</string>
+    <string name="success">Success!</string>
+    <string name="logging_you_in">Logging you in...</string>
 </resources>
